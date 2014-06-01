@@ -64,9 +64,7 @@ describe "Authentication" do
         describe "when attempting to visit a protected page" do
           before do
             visit edit_user_path(user)
-            fill_in "Email",    with: user.email
-            fill_in "Password", with: user.password
-            click_button "Sign in"
+            fill_in_signin(user)
           end
 
           describe "after signing in" do
