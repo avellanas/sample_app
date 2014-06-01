@@ -48,6 +48,16 @@ describe "Authentication" do
 
     describe "for non-signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
+      
+      describe "when not signed in" do
+        before { visit root_path }
+        it { should_not have_title(user.name) }
+        it { should_not have_link('Users',       href: users_path) }
+        it { should_not have_link('Profile',     href: user_path(user)) }
+        it { should_not have_link('Settings',    href: edit_user_path(user)) }
+        it { should_not have_link('Sign out',    href: signout_path) }
+        it { should have_link('Sign in', href: signin_path) }
+      end
 
       describe "in the Users controller" do
 
@@ -100,6 +110,30 @@ describe "Authentication" do
       end
     end
     
+    describe "as signed in user" do
+      let(:user) { FactoryGirl.create(:user) }
+      before { sign_in user, no_capybara: true }
+      
+      describe "visiting new user page" do
+        before { get new_user_path }
+        specify { expect(response).to redirect_to(root_url) }
+      end
+
+      describe "visiting signup page" do
+        before { get signup_path }
+        specify { expect(response).to redirect_to(root_url) }
+      end
+
+      describe "creating new user" do
+        let(:params) do
+          { user: { admin: true, password: user.password,
+                    password_confirmation: user.password } }
+        end
+        before { post users_path, params }
+        specify { expect(response).to redirect_to(root_url) }
+      end
+    end
+    
     describe "as non-admin user" do
       let(:user) { FactoryGirl.create(:user) }
       let(:non_admin) { FactoryGirl.create(:user) }
@@ -110,6 +144,7 @@ describe "Authentication" do
         before { delete user_path(user) }
         specify { expect(response).to redirect_to(root_url) }
       end
+      
     end
     
   end #authorization
