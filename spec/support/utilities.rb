@@ -8,11 +8,15 @@ def sign_in(user, options={})
     user.update_attribute(:remember_token, User.digest(remember_token))
   else
     visit signin_path
-    fill_in "Email",    with: user.email
-    fill_in "Password", with: user.password
-    click_button "Sign in"
+    fill_in_signin(user)
   end
 end
+
+def fill_in_signin(user, password=user.password)
+  fill_in "Email",    with: user.email
+  fill_in "Password", with: password
+  click_button "Sign in"
+end  
 
 def valid_signup
   fill_in "Name",         with: "Example User"
