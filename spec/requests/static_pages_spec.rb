@@ -20,15 +20,42 @@ describe "Static pages" do
     describe "for signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
       before do
-        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
-        FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
         sign_in user
-        visit root_path
       end
+      
+      describe "create microposts" do
+        before do
+          FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+          FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+          visit root_path
+        end
 
-      it "should render the user's feed" do
-        user.feed.each do |item|
-          expect(page).to have_selector("li##{item.id}", text: item.content)
+        it "should render the user's feed" do
+          user.feed.each do |item|
+            expect(page).to have_selector("li##{item.id}", text: item.content)
+          end
+        end
+      
+      end
+      
+      describe "have correct micropost count" do
+        before { visit root_path }
+        it { should have_content("0 microposts") }
+        
+        describe "should increment by one" do
+          before do
+            FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+            visit root_path
+          end
+          it { should have_content("1 micropost") }
+        end
+        
+        describe "should pluralize" do
+          before do
+            5.times { FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum") }
+            visit root_path
+          end
+          it { should have_content("5 microposts") }
         end
       end
     end
