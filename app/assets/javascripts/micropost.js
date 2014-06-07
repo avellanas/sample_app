@@ -3,6 +3,7 @@ function updateCountdown() {
   var left = 140 - jQuery('#micropost_content').val().length;
   var char_str = " characters"
   var limit_str = " left."
+  console.log("test")
 
   if (Math.abs(left) == 1) {
     char_str = " character"
@@ -18,8 +19,14 @@ function updateCountdown() {
   jQuery('.countdown').text(Math.abs(left) + char_str + limit_str);
 }
 
-jQuery(document).ready(function($) {
+$(function() {
+  initPage();
+});
+$(window).bind('page:change', function() {
+  initPage();
+});
+function initPage() {
   updateCountdown();
   $('#micropost_content').change(updateCountdown);
   $('#micropost_content').keyup(updateCountdown);
-});
+}
