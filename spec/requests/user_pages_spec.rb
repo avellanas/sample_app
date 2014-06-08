@@ -86,7 +86,7 @@ describe "User pages" do
         @another_user = FactoryGirl.create(:user) 
         31.times { FactoryGirl.create(:micropost, user: @another_user, content: "Foo") } 
       end
-      after(:all)  { @another_user.delete}
+      after(:all)  { @another_user.delete }
       
       before do
         sign_in @another_user
